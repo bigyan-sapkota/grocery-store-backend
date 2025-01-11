@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
-import { pgTable, primaryKey, text, unique, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, primaryKey, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable(
   'users',
@@ -7,12 +7,14 @@ export const users = pgTable(
     id: text('id').notNull().$defaultFn(createId),
     name: varchar('name', { length: 30 }).notNull(),
     email: varchar('email', { length: 40 }).notNull(),
-    password: varchar('password', { length: 200 }),
+    phone: varchar('phone', { length: 10 }).notNull(),
+    location: varchar('location', { length: 40 }),
+    locationUrl: varchar('locationUrl', { length: 200 }),
     image: varchar('image', { length: 200 }),
     role: varchar('role', { enum: ['admin', 'user'] })
       .notNull()
       .default('user'),
-    createdAt: varchar('state', { length: 30 })
+    createdAt: varchar('createdAt', { length: 30 })
   },
   function constraints(users) {
     return {
@@ -28,6 +30,9 @@ export const selectUserSnapshot = {
   id: users.id,
   name: users.name,
   email: users.email,
+  phone: users.phone,
+  location: users.location,
+  locationUrl: users.locationUrl,
   image: users.image,
   role: users.role,
   createdAt: users.createdAt
@@ -37,7 +42,10 @@ export type UserSnapshot = {
   id: string;
   name: string;
   email: string;
+  phone: string;
   image: string;
+  location?: string;
+  locationUrl?: string;
   role: 'user' | 'admin';
   createdAt: string;
 };

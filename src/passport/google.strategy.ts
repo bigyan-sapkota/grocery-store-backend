@@ -25,7 +25,17 @@ export const GoogleStrategy = new Strategy(
         .limit(1);
 
       if (!user) {
-        [user] = await db.insert(users).values({ id, name, email, image });
+        [user] = await db.insert(users).values({
+          id,
+          name,
+          email,
+          image,
+          phone: '',
+          location: '',
+          locationUrl: '',
+          role: 'user',
+          createdAt: new Date().toISOString()
+        });
       }
 
       if (!user) return done(null, undefined);

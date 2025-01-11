@@ -1,7 +1,7 @@
 import 'colors';
-import session from 'cookie-session';
 import { sql } from 'drizzle-orm';
 import express from 'express';
+import session from 'express-session';
 import morgan from 'morgan';
 import passport from 'passport';
 import { env, validateEnv } from './config/env.config';
@@ -15,7 +15,6 @@ import { serializer } from './passport/serializer';
 import { authRoute } from './routes/auth.route';
 import { userRoute } from './routes/user.route';
 
-console.log('hello');
 const app = express();
 validateEnv();
 app.use(express.json());
@@ -44,9 +43,13 @@ app.get('/', async (req, res) => {
 
 /* --------- routes --------- */
 app.use('/api/auth', authRoute);
+
+app.use('/api', userRoute);
+
 app.get('/doc', (req, res) => {
   res.json(openApiSpecs);
 });
+
 app.get('/reference', serveApiReference);
 
 app.get('/logout', (req, res) => {
@@ -58,6 +61,7 @@ app.get('/logout', (req, res) => {
 app.use(async () => {
   throw new NotFoundException();
 });
+
 app.use(handleErrorRequest);
 
 app.listen(env.PORT, () => {
